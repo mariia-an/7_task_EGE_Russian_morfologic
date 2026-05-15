@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Тренажёр: формы слова (ЕГЭ задание 7)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            background: #f0f4f8;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            margin: 0;
+            padding: 20px;
+            color: #1a2c3e;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .header {
+            background: white;
+            border-radius: 32px;
+            padding: 16px 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 24px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+        h1 {
+            font-size: 1.6rem;
+            margin: 0;
+            background: linear-gradient(135deg, #1e466e, #2b5a8c);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .badge {
+            background: #eef2fa;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .topics-panel {
+            background: white;
+            border-radius: 28px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+        .topic-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 15px 0 12px;
+        }
+        .topic-btn {
+            background: #eef2fa;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #1e466e;
+        }
+        .topic-btn.active {
+            background: #1e466e;
+            color: white;
+            box-shadow: 0 6px 12px rgba(30,70,110,0.2);
+        }
+        .random-btn {
+            background: #2b5a8c;
+            color: white;
+            border: none;
+            padding: 8px 28px;
+            border-radius: 60px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+        .mistake-area {
+            background: #fef5e7;
+            border-left: 5px solid #e67e22;
+            padding: 12px 20px;
+            border-radius: 20px;
+            margin: 12px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .mistake-btn {
+            background: #e67e22;
+            border: none;
+            color: white;
+            padding: 6px 18px;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .quiz-card {
+            background: white;
+            border-radius: 48px;
+            padding: 30px 28px;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .question-text {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 32px;
+            background: #f8fafd;
+            padding: 20px;
+            border-radius: 48px;
+            line-height: 1.4;
+        }
+        .input-area {
+            margin: 25px 0;
+        }
+        .answer-input {
+            font-size: 1.6rem;
+            width: 320px;
+            text-align: center;
+            padding: 12px;
+            border-radius: 60px;
+            border: 2px solid #cbd5e1;
+            font-weight: 500;
+            font-family: monospace;
+        }
+        .gender-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .gender-btn {
+            background: #eef2fa;
+            border: none;
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding: 12px 28px;
+            border-radius: 80px;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .gender-btn:hover:not(:disabled) {
+            background: #d0dfef;
+            transform: scale(1.02);
+        }
+        .gender-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .check-btn {
+            background: #1e466e;
+            color: white;
+            font-size: 1.2rem;
+            border: none;
+            padding: 12px 36px;
+            border-radius: 60px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: 0.1s;
+        }
+        .check-btn:hover:not(:disabled) {
+            background: #2b5a8c;
+            transform: scale(1.02);
+        }
+        .check-btn:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+        }
+        .feedback {
+            font-size: 1.2rem;
+            margin: 20px 0;
+            padding: 12px;
+            border-radius: 48px;
+            font-weight: 500;
+            animation: fadeIn 0.3s;
+        }
+        .feedback.correct {
+            background: #dff9e6;
+            color: #2b6e3c;
+            border: 2px solid #2b6e3c;
+        }
+        .feedback.wrong {
+            background: #ffe5e5;
+            color: #c0392b;
+            border: 2px solid #c0392b;
+        }
+        .next-btn {
+            background: #e2e8f0;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 60px;
+            font-weight: bold;
+            font-size: 1rem;
+            margin-top: 16px;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .next-btn:hover {
+            background: #cbd5e1;
+            transform: scale(1.02);
+        }
+        .progress {
+            margin-top: 20px;
+            padding: 10px;
+            background: #eef2fa;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @media (max-width: 650px) {
+            .question-text { font-size: 1.2rem; }
+            .answer-input { width: 220px; font-size: 1.2rem; }
+            .gender-btn { padding: 8px 16px; font-size: 1rem; }
+        }
+        footer {
+            text-align: center;
+            margin-top: 32px;
+            opacity: 0.7;
+            font-size: 0.75rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>📘 Формы слова · Нормы морфологии</h1>
+        <div class="badge">⭐ задание 7 (ЕГЭ) — тренажёр</div>
+    </div>
+
+    <div class="topics-panel">
+        <div style="font-weight: 600; margin-bottom: 6px;">🎯 Выберите раздел:</div>
+        <div class="topic-buttons" id="topicButtons"></div>
+        <button id="randomTopicBtn" class="random-btn">🎲 Рандомное слово</button>
+        <div class="mistake-area" id="mistakeBox" style="display: none;">
+            <span>❌ Ошибочные слова: <strong id="mistakeCount">0</strong></span>
+            <button id="mistakeTrainBtn" class="mistake-btn">🔁 Тренировать ошибки</button>
+        </div>
+    </div>
+
+    <div class="quiz-card" id="quizCard">
+        <div class="question-text" id="questionText"></div>
+        <div id="dynamicInput"></div>
+        <div class="feedback" id="feedbackMsg"></div>
+        <button id="nextBtn" class="next-btn">➡ Следующее слово</button>
+        <div class="progress" id="progressInfo"></div>
+    </div>
+    <footer>✓ Введите полную форму слова. Для нулевого окончания пишите слово без окончания (например: чулок, вафель)</footer>
+</div>
+
+<script>
+    // Функция нормализации: заменяем ё на е для сравнения
+    function normalizeForCompare(str) {
+        return str.toLowerCase().replace(/ё/g, 'е');
+    }
+    
+    // ---------- БАЗА ДАННЫХ ----------
+    
+    const pluralNomWords = [
+        { base: "бухгалтер", correct: "бухгалтеры" },
+        { base: "договор", correct: "договоры" },
+        { base: "инженер", correct: "инженеры" },
+        { base: "тренер", correct: "тренеры" },
+        { base: "шофёр", correct: "шофёры" },
+        { base: "вексель", correct: "векселя" },
+        { base: "директор", correct: "директора" },
+        { base: "профессор", correct: "профессора" },
+        { base: "доктор", correct: "доктора" },
+        { base: "повар", correct: "повара" },
+        { base: "сторож", correct: "сторожа" },
+        { base: "торт", correct: "торты" },
+        { base: "адрес", correct: "адреса" },
+        { base: "берег", correct: "берега" },
+        { base: "катер", correct: "катера" },
+        { base: "колокол", correct: "колокола" },
+        { base: "парус", correct: "паруса" },
+        { base: "паспорт", correct: "паспорта" },
+        { base: "поезд", correct: "поезда" },
+        { base: "сорт", correct: "сорта" },
+        { base: "тополь", correct: "тополя" },
+        { base: "хутор", correct: "хутора" },
+        { base: "якорь", correct: "якоря" },
+        { base: "режиссёр", correct: "режиссёры" },
+        { base: "лектор", correct: "лекторы" },
+        { base: "ректор", correct: "ректоры" },
+        { base: "слесарь", correct: "слесари" },
+        { base: "купол", correct: "купола" },
+        { base: "номер", correct: "номера" },
+        { base: "веер", correct: "веера" }
+    ];
+    
+    const genPlurals = [
+        { wordForm: "носки", correct: "носков" },
+        { wordForm: "чулки", correct: "чулок" },
+        { wordForm: "сапоги", correct: "сапог" },
+        { wordForm: "помидоры", correct: "помидоров" },
+        { wordForm: "яблоки", correct: "яблок" },
+        { wordForm: "апельсины", correct: "апельсинов" },
+        { wordForm: "бананы", correct: "бананов" },
+        { wordForm: "баклажаны", correct: "баклажанов" },
+        { wordForm: "килограммы", correct: "килограммов" },
+        { wordForm: "граммы", correct: "граммов" },
+        { wordForm: "вафли", correct: "вафель" },
+        { wordForm: "туфли", correct: "туфель" },
+        { wordForm: "мандарины", correct: "мандаринов" },
+        { wordForm: "армяне", correct: "армян" },
+        { wordForm: "грузины", correct: "грузин" },
+        { wordForm: "лезгины", correct: "лезгин" },
+        { wordForm: "калмыки", correct: "калмыков" },
+        { wordForm: "партизаны", correct: "партизан" },
+        { wordForm: "ботинки", correct: "ботинок" },
+        { wordForm: "очки", correct: "очков" },
+        { wordForm: "джинсы", correct: "джинсов" },
+        { wordForm: "полотенца", correct: "полотенец" },
+        { wordForm: "блюдца", correct: "блюдец" },
+        { wordForm: "серьги", correct: "серёг" },
+        { wordForm: "абрикосы", correct: "абрикосов" },
+        { wordForm: "ананасы", correct: "ананасов" },
+        { wordForm: "петли", correct: "петель" },
+        { wordForm: "простыни", correct: "простынь" },
+        { wordForm: "рояли", correct: "роялей" },
+        { wordForm: "скальпели", correct: "скальпелей" },
+        { wordForm: "манжеты", correct: "манжет" },
+        { wordForm: "гантели", correct: "гантелей" }
+    ];
+    
+    const genderWords = [
+        { word: "тюль", correct: "м" }, { word: "мозоль", correct: "ж" },
+        { word: "шампунь", correct: "м" }, { word: "рояль", correct: "м" },
+        { word: "вуаль", correct: "ж" }, { word: "какаду", correct: "м" },
+        { word: "кенгуру", correct: "м" }, { word: "шимпанзе", correct: "м" },
+        { word: "кофе", correct: "м" }, { word: "авеню", correct: "ж" },
+        { word: "иваси", correct: "ж" }, { word: "салями", correct: "ж" },
+        { word: "кольраби", correct: "ж" }, { word: "пенсне", correct: "ср" },
+        { word: "кашне", correct: "ср" }, { word: "регби", correct: "ср" },
+        { word: "такси", correct: "ср" }, { word: "метро", correct: "ср" },
+        { word: "пальто", correct: "ср" }, { word: "кафе", correct: "ср" },
+        { word: "меню", correct: "ср" }, { word: "жалюзи", correct: "ср" },
+        { word: "алоэ", correct: "ср" }, { word: "ателье", correct: "ср" },
+        { word: "интервью", correct: "ср" }, { word: "пианино", correct: "ср" },
+        { word: "леди", correct: "ж" }, { word: "мадам", correct: "ж" },
+        { word: "фрау", correct: "ж" }, { word: "цеце", correct: "ж" }
+    ];
+    
+    const singularOnly = [
+        "молодёжь", "мед", "листва", "дрожь", "молоко",
+        "серебро", "соль", "цемент", "шерсть", "баранина", "земляника",
+        "черника", "вороньё", "крестьянство", "детвора", "беднота",
+        "тишина", "белизна", "синева", "слепота", "терпение", "смех", "голод"
+    ];
+    
+    const pluralOnly = [
+        "джинсы", "брюки", "шорты", "часы", "сутки", "каникулы",
+        "чернила", "ворота", "сани", "ножницы", "щипцы", "выборы", "дебаты", "средства"
+    ];
+    
+    const variantWords = [
+        { meaning: "злаки на корню", form1: "хлеба", form2: "хлебы", correct: "хлеба" },
+        { meaning: "печёные изделия", form1: "хлеба", form2: "хлебы", correct: "хлебы" },
+        { meaning: "документы на вход", form1: "пропуска", form2: "пропуски", correct: "пропуска" },
+        { meaning: "пробелы, отсутствие", form1: "пропуска", form2: "пропуски", correct: "пропуски" },
+        { meaning: "иконы", form1: "образа", form2: "образы", correct: "образа" },
+        { meaning: "художественные", form1: "образа", form2: "образы", correct: "образы" },
+        { meaning: "преподаватели", form1: "учителя", form2: "учители", correct: "учителя" },
+        { meaning: "основатели учения", form1: "учителя", form2: "учители", correct: "учители" },
+        { meaning: "здания", form1: "корпуса", form2: "корпусы", correct: "корпуса" },
+        { meaning: "туловища", form1: "корпуса", form2: "корпусы", correct: "корпусы" },
+        { meaning: "туристические, военные", form1: "лагеря", form2: "лагери", correct: "лагеря" },
+        { meaning: "политические группировки", form1: "лагеря", form2: "лагери", correct: "лагери" },
+        { meaning: "цвета", form1: "тона", form2: "тоны", correct: "тона" },
+        { meaning: "музыкальные", form1: "тона", form2: "тоны", correct: "тоны" }
+    ];
+    
+    let allWords = [];
+    
+    pluralNomWords.forEach(w => {
+        allWords.push({ 
+            type: 'plural_nom', 
+            base: w.base, 
+            correct: w.correct,
+            questionText: `Образуйте форму именительного падежа множественного числа слова «${w.base}»:`
+        });
+    });
+    
+    genPlurals.forEach(w => {
+        allWords.push({ 
+            type: 'gen_plural', 
+            displayWord: w.wordForm, 
+            correct: w.correct, 
+            questionText: `Образуйте форму родительного падежа множественного числа от слова «${w.wordForm}» (И.п мн.ч):`
+        });
+    });
+    
+    genderWords.forEach(w => {
+        allWords.push({ 
+            type: 'gender', 
+            displayWord: w.word, 
+            correctGender: w.correct, 
+            questionText: `Определите род существительного «${w.word}»:`
+        });
+    });
+    
+    singularOnly.forEach(w => {
+        allWords.push({ 
+            type: 'singular_yesno', 
+            displayWord: w, 
+            correctAnswer: "нет",
+            explanation: `Слово «${w}» употребляется только в единственном числе (singularia tantum)`,
+            questionText: `Может ли слово «${w}» употребляться во множественном числе?`
+        });
+    });
+    
+    pluralOnly.forEach(w => {
+        allWords.push({ 
+            type: 'plural_yesno', 
+            displayWord: w, 
+            correctAnswer: "нет",
+            explanation: `Слово «${w}» употребляется только во множественном числе (pluralia tantum)`,
+            questionText: `Имеет ли слово «${w}» форму единственного числа?`
+        });
+    });
+    
+    variantWords.forEach(w => {
+        allWords.push({ 
+            type: 'variant', 
+            meaning: w.meaning,
+            form1: w.form1,
+            form2: w.form2,
+            correct: w.correct,
+            questionText: `Выберите правильную форму слова в значении «${w.meaning}»:`
+        });
+    });
+    
+    // Состояние
+    let currentTopic = "all";
+    let currentWordsList = [];
+    let currentIndex = 0;
+    let currentWordObj = null;
+    let mistakeList = [];
+    let answeredCount = 0;
+    let isAnswered = false;
+    let waitingForNext = false;
+    
+    const questionEl = document.getElementById("questionText");
+    const dynamicInput = document.getElementById("dynamicInput");
+    const feedbackDiv = document.getElementById("feedbackMsg");
+    const nextBtn = document.getElementById("nextBtn");
+    const progressInfo = document.getElementById("progressInfo");
+    const mistakeBox = document.getElementById("mistakeBox");
+    const mistakeCountSpan = document.getElementById("mistakeCount");
+    const randomTopicBtn = document.getElementById("randomTopicBtn");
+    const mistakeTrainBtn = document.getElementById("mistakeTrainBtn");
+    const topicButtonsDiv = document.getElementById("topicButtons");
+    
+    function shuffleArray(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+    
+    function filterWordsByTopic(topic) {
+        if (topic === "all") return [...allWords];
+        if (topic === "im") return allWords.filter(w => w.type === 'plural_nom');
+        if (topic === "rp") return allWords.filter(w => w.type === 'gen_plural');
+        if (topic === "gender") return allWords.filter(w => w.type === 'gender');
+        if (topic === "variants") return allWords.filter(w => w.type === 'variant');
+        if (topic === "sgonly") return allWords.filter(w => w.type === 'singular_yesno');
+        if (topic === "plonly") return allWords.filter(w => w.type === 'plural_yesno');
+        return [...allWords];
+    }
+    
+    function loadTopic(topic) {
+        currentTopic = topic;
+        let words = filterWordsByTopic(topic);
+        if (words.length === 0) words = [...allWords];
+        currentWordsList = shuffleArray([...words]);
+        currentIndex = 0;
+        answeredCount = 0;
+        isAnswered = false;
+        waitingForNext = false;
+        loadCurrentWord();
+        updateProgress();
+    }
+    
+    function loadCurrentWord() {
+        if (currentIndex >= currentWordsList.length) {
+            questionEl.innerHTML = "🎉 Поздравляем! Вы прошли все слова в этом разделе! 🎉";
+            dynamicInput.innerHTML = `<button class="check-btn" id="restartTopicBtn">Пройти заново</button>`;
+            feedbackDiv.innerHTML = "";
+            const restartBtn = document.getElementById("restartTopicBtn");
+            if (restartBtn) restartBtn.onclick = () => loadTopic(currentTopic);
+            nextBtn.disabled = false;
+            return;
+        }
+        currentWordObj = { ...currentWordsList[currentIndex] };
+        isAnswered = false;
+        waitingForNext = false;
+        questionEl.innerHTML = currentWordObj.questionText;
+        renderQuestion(currentWordObj);
+        updateProgress();
+    }
+    
+    function updateProgress() {
+        progressInfo.innerText = `📊 Прогресс: ${answeredCount} из ${currentWordsList.length} слов`;
+    }
+    
+    function markAnswered(correct) {
+        if (isAnswered) return;
+        isAnswered = true;
+        answeredCount++;
+        if (!correct) {
+            addToMistakes(currentWordObj);
+        } else {
+            removeFromMistakes(currentWordObj);
+        }
+        updateProgress();
+        waitingForNext = true;
+        nextBtn.disabled = false;
+    }
+    
+    function goToNext() {
+        if (!waitingForNext && !isAnswered) return;
+        currentIndex++;
+        loadCurrentWord();
+        waitingForNext = false;
+        nextBtn.disabled = false;
+    }
+    
+    function renderQuestion(wordObj) {
+        dynamicInput.innerHTML = "";
+        feedbackDiv.innerHTML = "";
+        
+        if (wordObj.type === 'plural_nom') {
+            dynamicInput.innerHTML = `
+                <div class="input-area">
+                    <input type="text" id="answerInput" class="answer-input" placeholder="введите форму слова" autocomplete="off">
+                    <button id="submitBtn" class="check-btn">Проверить</button>
+                </div>
+            `;
+            const input = document.getElementById('answerInput');
+            const btn = document.getElementById('submitBtn');
+            const checkAnswer = () => {
+                if (isAnswered) return;
+                let answer = normalizeForCompare(input.value.trim());
+                let correctLower = normalizeForCompare(wordObj.correct);
+                let isCorrect = (answer === correctLower);
+                if (isCorrect) {
+                    showFeedback(true, `✅ Верно! ${wordObj.correct}`);
+                    markAnswered(true);
+                } else {
+                    showFeedback(false, `❌ Ошибка! Правильно: ${wordObj.correct}`);
+                    markAnswered(false);
+                }
+                btn.disabled = true;
+                input.disabled = true;
+            };
+            btn.onclick = checkAnswer;
+            input.onkeypress = (e) => { if (e.key === 'Enter') checkAnswer(); };
+        }
+        else if (wordObj.type === 'gen_plural') {
+            dynamicInput.innerHTML = `
+                <div class="input-area">
+                    <input type="text" id="answerInput" class="answer-input" placeholder="введите форму Р.п мн.ч" autocomplete="off">
+                    <button id="submitBtn" class="check-btn">Проверить</button>
+                </div>
+            `;
+            const input = document.getElementById('answerInput');
+            const btn = document.getElementById('submitBtn');
+            const checkAnswer = () => {
+                if (isAnswered) return;
+                let answer = normalizeForCompare(input.value.trim());
+                let correctLower = normalizeForCompare(wordObj.correct);
+                let isCorrect = (answer === correctLower);
+                if (isCorrect) {
+                    showFeedback(true, `✅ Верно! ${wordObj.correct}`);
+                    markAnswered(true);
+                } else {
+                    showFeedback(false, `❌ Ошибка! Правильно: ${wordObj.correct}`);
+                    markAnswered(false);
+                }
+                btn.disabled = true;
+                input.disabled = true;
+            };
+            btn.onclick = checkAnswer;
+            input.onkeypress = (e) => { if (e.key === 'Enter') checkAnswer(); };
+        }
+        else if (wordObj.type === 'gender') {
+            const genderMap = { 'м': 'Мужской', 'ж': 'Женский', 'ср': 'Средний' };
+            dynamicInput.innerHTML = `
+                <div class="gender-buttons">
+                    <button data-g="м" class="gender-btn">Мужской</button>
+                    <button data-g="ж" class="gender-btn">Женский</button>
+                    <button data-g="ср" class="gender-btn">Средний</button>
+                </div>
+            `;
+            const btns = document.querySelectorAll('.gender-btn');
+            btns.forEach(btn => {
+                btn.onclick = () => {
+                    if (isAnswered) return;
+                    let selected = btn.getAttribute('data-g');
+                    let isCorrect = (selected === wordObj.correctGender);
+                    if (isCorrect) {
+                        showFeedback(true, `✅ Верно! Род — ${genderMap[wordObj.correctGender]}`);
+                        markAnswered(true);
+                    } else {
+                        let correctText = genderMap[wordObj.correctGender];
+                        showFeedback(false, `❌ Ошибка! Правильный род — ${correctText}`);
+                        markAnswered(false);
+                    }
+                    btns.forEach(b => b.disabled = true);
+                };
+            });
+        }
+        else if (wordObj.type === 'variant') {
+            dynamicInput.innerHTML = `
+                <div class="gender-buttons">
+                    <button data-variant="${wordObj.form1}" class="gender-btn">${wordObj.form1}</button>
+                    <button data-variant="${wordObj.form2}" class="gender-btn">${wordObj.form2}</button>
+                </div>
+            `;
+            const btns = document.querySelectorAll('[data-variant]');
+            btns.forEach(btn => {
+                btn.onclick = () => {
+                    if (isAnswered) return;
+                    let chosen = btn.getAttribute('data-variant');
+                    let isCorrect = (chosen === wordObj.correct);
+                    if (isCorrect) {
+                        showFeedback(true, `✅ Верно! В значении «${wordObj.meaning}» правильная форма — «${wordObj.correct}».`);
+                        markAnswered(true);
+                    } else {
+                        showFeedback(false, `❌ Ошибка! В значении «${wordObj.meaning}» правильная форма — «${wordObj.correct}».`);
+                        markAnswered(false);
+                    }
+                    btns.forEach(b => b.disabled = true);
+                };
+            });
+        }
+        else if (wordObj.type === 'singular_yesno') {
+            dynamicInput.innerHTML = `
+                <div class="gender-buttons">
+                    <button data-ans="да" class="gender-btn">Да</button>
+                    <button data-ans="нет" class="gender-btn">Нет</button>
+                </div>
+            `;
+            const btns = document.querySelectorAll('[data-ans]');
+            btns.forEach(btn => {
+                btn.onclick = () => {
+                    if (isAnswered) return;
+                    let selected = btn.getAttribute('data-ans');
+                    let isCorrect = (selected === wordObj.correctAnswer);
+                    if (isCorrect) {
+                        showFeedback(true, `✅ Верно! ${wordObj.explanation}`);
+                        markAnswered(true);
+                    } else {
+                        showFeedback(false, `❌ Ошибка! ${wordObj.explanation}`);
+                        markAnswered(false);
+                    }
+                    btns.forEach(b => b.disabled = true);
+                };
+            });
+        }
+        else if (wordObj.type === 'plural_yesno') {
+            dynamicInput.innerHTML = `
+                <div class="gender-buttons">
+                    <button data-ans="да" class="gender-btn">Да</button>
+                    <button data-ans="нет" class="gender-btn">Нет</button>
+                </div>
+            `;
+            const btns = document.querySelectorAll('[data-ans]');
+            btns.forEach(btn => {
+                btn.onclick = () => {
+                    if (isAnswered) return;
+                    let selected = btn.getAttribute('data-ans');
+                    let isCorrect = (selected === wordObj.correctAnswer);
+                    if (isCorrect) {
+                        showFeedback(true, `✅ Верно! ${wordObj.explanation}`);
+                        markAnswered(true);
+                    } else {
+                        showFeedback(false, `❌ Ошибка! ${wordObj.explanation}`);
+                        markAnswered(false);
+                    }
+                    btns.forEach(b => b.disabled = true);
+                };
+            });
+        }
+    }
+    
+    function showFeedback(isCorrect, msg) {
+        feedbackDiv.innerHTML = msg;
+        feedbackDiv.className = `feedback ${isCorrect ? 'correct' : 'wrong'}`;
+    }
+    
+    function addToMistakes(wordObj) {
+        const key = `${wordObj.type}_${wordObj.questionText}`;
+        if (!mistakeList.some(w => `${w.type}_${w.questionText}` === key)) {
+            mistakeList.push({ ...wordObj });
+            updateMistakeUI();
+        }
+    }
+    
+    function removeFromMistakes(wordObj) {
+        const key = `${wordObj.type}_${wordObj.questionText}`;
+        const idx = mistakeList.findIndex(w => `${w.type}_${w.questionText}` === key);
+        if (idx !== -1) {
+            mistakeList.splice(idx, 1);
+            updateMistakeUI();
+        }
+    }
+    
+    function updateMistakeUI() {
+        if (mistakeList.length > 0) {
+            mistakeBox.style.display = "flex";
+            mistakeCountSpan.innerText = mistakeList.length;
+        } else {
+            mistakeBox.style.display = "none";
+        }
+    }
+    
+    function trainMistakes() {
+        if (mistakeList.length === 0) {
+            alert("❌ Нет ошибок! Сначала сделайте несколько ошибок для тренировки.");
+            return;
+        }
+        currentWordsList = shuffleArray([...mistakeList]);
+        currentIndex = 0;
+        answeredCount = 0;
+        isAnswered = false;
+        waitingForNext = false;
+        currentTopic = "mistakes";
+        loadCurrentWord();
+        updateProgress();
+    }
+    
+    function randomWord() {
+        const all = [...allWords];
+        const randomWordObj = all[Math.floor(Math.random() * all.length)];
+        currentWordsList = [randomWordObj];
+        currentIndex = 0;
+        answeredCount = 0;
+        isAnswered = false;
+        waitingForNext = false;
+        currentTopic = "random";
+        loadCurrentWord();
+        updateProgress();
+    }
+    
+    // Создание кнопок разделов
+    const topics = [
+        { id: "all", name: "🧠 ВСЕ ТЕМЫ" },
+        { id: "im", name: "📌 И.п мн.ч" },
+        { id: "rp", name: "📌 Р.п мн.ч" },
+        { id: "gender", name: "🚻 Род существительных" },
+        { id: "variants", name: "🔄 Вариативные формы" },
+        { id: "sgonly", name: "📖 Только ед.ч" },
+        { id: "plonly", name: "📖 Только мн.ч" }
+    ];
+    
+    topics.forEach(topic => {
+        const btn = document.createElement('button');
+        btn.className = 'topic-btn';
+        btn.textContent = topic.name;
+        btn.setAttribute('data-topic', topic.id);
+        btn.onclick = () => {
+            document.querySelectorAll('.topic-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            loadTopic(topic.id);
+        };
+        topicButtonsDiv.appendChild(btn);
+    });
+    
+    randomTopicBtn.onclick = randomWord;
+    mistakeTrainBtn.onclick = trainMistakes;
+    nextBtn.onclick = goToNext;
+    
+    loadTopic("all");
+    updateMistakeUI();
+</script>
+</body>
+</html>
